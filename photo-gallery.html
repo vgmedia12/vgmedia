@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VG Media - Photo Gallery</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: #000000;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+    }
+
+    header img {
+      max-width: 100px;
+    }
+
+    nav {
+      background: #222;
+      color: white;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1rem 0;
+    }
+
+    nav a {
+      color:#ff00ff;
+      text-decoration: none;
+      font-weight: bold;
+      text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff;
+    }
+
+    nav a:hover {
+      color: #ff00ff;
+      text-shadow: 0 0 15px #ff00ff, 0 0 20px #ff00ff;
+    }
+
+    section {
+      padding: 2rem;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .gallery-grid img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      border: 2px solid #00ff00;
+    }
+
+    .gallery-grid img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+    }
+
+    .pagination {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .pagination button {
+      background-color: #333;
+      color: #fff;
+      border: 1px solid #00ff00;
+      padding: 0.5rem 1rem;
+      margin: 0 0.25rem;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    .pagination button:hover {
+      background-color: #00ff00;
+      color: #000;
+      box-shadow: 0 0 10px #00ff00;
+    }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+    }
+
+    .lightbox:target {
+      display: flex;
+    }
+
+    footer {
+      background: #1a1a1a;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      text-shadow: 0 0 10px #ff00ff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="Gaffer 1 - Copy.jpg" alt="VG Media Logo" />
+    <h1>Photo Gallery</h1>
+    <p>Explore our latest photo work</p>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="contact.html">Contact Us</a>
+  </nav>
+
+  <section>
+    <h2>Photo Highlights</h2>
+    <div class="gallery-grid" id="gallery"></div>
+    <div class="pagination" id="pagination"></div>
+  </section>
+
+  <div id="lightbox" class="lightbox" onclick="this.style.display='none'">
+    <img id="lightbox-img" src="" alt="Expanded Photo">
+  </div>
+
+  <footer>
+    &copy; 2025 VG Media. All rights reserved.
+  </footer>
+
+  <script>
+    const photos = [
+      "C.jpg", "D.jpg", "E.jpg",
+      "G.jpg", "H.jpg", "I.jpg", "J.jpg",
+      "K.jpg", "L.jpg", "Li.heic", "M.jpg",
+      "N.jpg", "O.jpg", "P.jpg", "Q.jpg", "R.jpg", "S.jpg", 
+      "T.jpg", "U.jpg", "V.jpg", "W.jpg", "Z.jpg", "AA.jpg", "BB.jpg", "CC.jpg", "DD.jpg",
+      "FF.jpg", "HH.jpg",
+    ];
+
+    const gallery = document.getElementById("gallery");
+    const pagination = document.getElementById("pagination");
+    let currentPage = 1;
+    const photosPerPage = 10;
+
+    function renderGallery() {
+      gallery.innerHTML = "";
+      const start = (currentPage - 1) * photosPerPage;
+      const end = start + photosPerPage;
+      const pagePhotos = photos.slice(start, end);
+
+      pagePhotos.forEach(src => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "Photo Session";
+        img.onclick = () => openLightbox(src);
+        gallery.appendChild(img);
+      });
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      pagination.innerHTML = "";
+      const totalPages = Math.ceil(photos.length / photosPerPage);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = i;
+        btn.onclick = () => {
+          currentPage = i;
+          renderGallery();
+        };
+        if (i === currentPage) btn.style.backgroundColor = "#555";
+        pagination.appendChild(btn);
+      }
+    }
+
+    function openLightbox(src) {
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImg = document.getElementById("lightbox-img");
+      lightboxImg.src = src;
+      lightbox.style.display = "flex";
+    }
+
+    renderGallery();
+  </script>
+</body>
+</html>
